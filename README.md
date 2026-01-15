@@ -50,21 +50,6 @@ This TF structure is treated as a strict contract.
 All simulation and future hardware components are required to conform to it so that
 SLAM Toolbox and Nav2 do not need to be modified when transitioning to real hardware.
 
----
-
-Repository Structure:
-
-  ros2-slam-nav2-sim/
-  ├── docs/
-  │   ├── images/        # gifs, diagrams, screenshots
-  │   ├── notes/         # setup, debugging, tuning notes
-  │   └── roadmap.md
-  ├── ros2_ws/src/
-  │   ├── my_robot_description/  # URDF/Xacro
-  │   ├── my_robot_sim/          # Gazebo worlds
-  │   ├── my_robot_bringup/      # launch + config
-  │   └── my_robot_maps/         # saved maps
-  └── scripts/                   # build/run helpers
 
 ---
 
@@ -197,5 +182,6 @@ Each completed phase will include:
 
 License:
   See LICENSE file
+
 
 
