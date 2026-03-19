@@ -1,0 +1,201 @@
+<?xml version="1.0"?>
+<robot name="my_robot" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- =========================
+       Basic reusable properties
+       ========================= -->
+  <xacro:property name="chassis_length" value="0.28"/>
+  <xacro:property name="chassis_width"  value="0.22"/>
+  <xacro:property name="chassis_height" value="0.10"/>
+
+  <xacro:property name="wheel_radius" value="0.05"/>
+  <xacro:property name="wheel_width"  value="0.03"/>
+
+  <xacro:property name="laser_radius" value="0.035"/>
+  <xacro:property name="laser_length" value="0.04"/>
+
+  <!-- wheel placement -->
+  <xacro:property name="front_wheel_x" value="0.09"/>
+  <xacro:property name="rear_wheel_x"  value="-0.09"/>
+  <xacro:property name="left_wheel_y"  value="${chassis_width/2.0}"/>
+  <xacro:property name="right_wheel_y" value="-${chassis_width/2.0}"/>
+
+  <!-- simple masses for visualization / basic physics -->
+  <xacro:property name="base_mass"  value="3.0"/>
+  <xacro:property name="wheel_mass" value="0.2"/>
+  <xacro:property name="laser_mass" value="0.1"/>
+
+  <!-- =========================
+       Helper macro: box inertia
+       ========================= -->
+  <xacro:macro name="box_inertia" params="mass x y z">
+    <inertial>
+      <mass value="${mass}"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <inertia
+        ixx="${(1.0/12.0) * mass * (y*y + z*z)}"
+        ixy="0.0"
+        ixz="0.0"
+        iyy="${(1.0/12.0) * mass * (x*x + z*z)}"
+        iyz="0.0"
+        izz="${(1.0/12.0) * mass * (x*x + y*y)}"/>
+    </inertial>
+  </xacro:macro>
+
+  <!-- ==============================
+       Helper macro: cylinder inertia
+       cylinder axis assumed along Z
+       ============================== -->
+  <xacro:macro name="cylinder_inertia" params="mass radius length">
+    <inertial>
+      <mass value="${mass}"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <inertia
+        ixx="${(1.0/12.0) * mass * (3*radius*radius + length*length)}"
+        ixy="0.0"
+        ixz="0.0"
+        iyy="${(1.0/12.0) * mass * (3*radius*radius + length*length)}"
+        iyz="0.0"
+        izz="${0.5 * mass * radius * radius}"/>
+    </inertial>
+  </xacro:macro>
+
+  <!-- =========================
+       Reusable wheel macro
+       ========================= -->
+  <xacro:macro name="wheel_link_and_joint" params="wheel_name parent x y">
+    <link name="${wheel_name}_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="1.57079632679 0 0"/>
+        <geometry>
+          <cylinder radius="${wheel_radius}" length="${wheel_width}"/>
+        </geometry>
+        <material name="black">
+          <color rgba="0.1 0.1 0.1 1.0"/>
+        </material>
+      </visual>
+
+      <collision>
+        <origin xyz="0 0 0" rpy="1.57079632679 0 0"/>
+        <geometry>
+          <cylinder radius="${wheel_radius}" length="${wheel_width}"/>
+        </geometry>
+      </collision>
+
+      <xacro:cylinder_inertia
+        mass="${wheel_mass}"
+        radius="${wheel_radius}"
+        length="${wheel_width}"/>
+    </link>
+
+    <joint name="${wheel_name}_joint" type="continuous">
+      <parent link="${parent}"/>
+      <child link="${wheel_name}_link"/>
+      <origin xyz="${x} ${y} 0" rpy="0 0 0"/>
+      <axis xyz="0 1 0"/>
+    </joint>
+  </xacro:macro>
+
+  <!-- =========================
+       base_footprint
+       2D ground reference frame
+       ========================= -->
+  <link name="base_footprint"/>
+
+  <!-- =========================
+       base_link
+       main body/chassis frame
+       ========================= -->
+  <link name="base_link">
+    <visual>
+      <origin xyz="0 0 ${chassis_height/2.0}" rpy="0 0 0"/>
+      <geometry>
+        <box size="${chassis_length} ${chassis_width} ${chassis_height}"/>
+      </geometry>
+      <material name="blue">
+        <color rgba="0.0 0.0 0.8 1.0"/>
+      </material>
+    </visual>
+
+    <collision>
+      <origin xyz="0 0 ${chassis_height/2.0}" rpy="0 0 0"/>
+      <geometry>
+        <box size="${chassis_length} ${chassis_width} ${chassis_height}"/>
+      </geometry>
+    </collision>
+
+    <xacro:box_inertia
+      mass="${base_mass}"
+      x="${chassis_length}"
+      y="${chassis_width}"
+      z="${chassis_height}"/>
+  </link>
+
+  <!-- fixed joint: base_footprint -> base_link -->
+  <joint name="base_footprint_to_base_link" type="fixed">
+    <parent link="base_footprint"/>
+    <child link="base_link"/>
+    <origin xyz="0 0 ${wheel_radius}" rpy="0 0 0"/>
+  </joint>
+
+  <!-- =========================
+       Four wheels
+       ========================= -->
+  <xacro:wheel_link_and_joint
+    wheel_name="front_left_wheel"
+    parent="base_link"
+    x="${front_wheel_x}"
+    y="${left_wheel_y}"/>
+
+  <xacro:wheel_link_and_joint
+    wheel_name="rear_left_wheel"
+    parent="base_link"
+    x="${rear_wheel_x}"
+    y="${left_wheel_y}"/>
+
+  <xacro:wheel_link_and_joint
+    wheel_name="front_right_wheel"
+    parent="base_link"
+    x="${front_wheel_x}"
+    y="${right_wheel_y}"/>
+
+  <xacro:wheel_link_and_joint
+    wheel_name="rear_right_wheel"
+    parent="base_link"
+    x="${rear_wheel_x}"
+    y="${right_wheel_y}"/>
+
+  <!-- =========================
+       LiDAR link
+       ========================= -->
+  <link name="laser_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="${laser_radius}" length="${laser_length}"/>
+      </geometry>
+      <material name="green">
+        <color rgba="0.2 0.8 0.2 1.0"/>
+      </material>
+    </visual>
+
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="${laser_radius}" length="${laser_length}"/>
+      </geometry>
+    </collision>
+
+    <xacro:cylinder_inertia
+      mass="${laser_mass}"
+      radius="${laser_radius}"
+      length="${laser_length}"/>
+  </link>
+
+  <joint name="laser_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="laser_link"/>
+    <origin xyz="0 0 ${chassis_height + 0.02}" rpy="0 0 0"/>
+  </joint>
+
+</robot>
