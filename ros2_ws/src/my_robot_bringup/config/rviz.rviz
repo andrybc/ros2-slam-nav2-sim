@@ -92,7 +92,7 @@ Visualization Manager:
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
-    Fixed Frame: base_footprint
+    Fixed Frame: odom
     Frame Rate: 30
   Name: root
   Tools:
@@ -141,7 +141,7 @@ Views:
       Z: 0.1
     Near Clip Distance: 0.01
     Pitch: 0.65
-    Target Frame: base_footprint
+    Target Frame: odom
     Value: Orbit (rviz)
     Yaw: 0.8
 

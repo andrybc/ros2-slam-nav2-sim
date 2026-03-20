@@ -57,12 +57,6 @@ def generate_launch_description():
         parameters=[robot_description]
     )
 
-    joint_state_publisher_node = Node(
-        package='joint_state_publisher',
-        executable='joint_state_publisher',
-        name='joint_state_publisher',
-        output='screen'
-    )
 
     spawn_robot = Node(
         package='ros_gz_sim',
@@ -77,6 +71,18 @@ def generate_launch_description():
         output='screen'
     )
 
+    bridge_node = Node(
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        arguments=[
+            '/cmd_vel@geometry_msgs/msg/Twist@gz.msgs.Twist',
+            '/odom@nav_msgs/msg/Odometry[gz.msgs.Odometry',
+            '/tf@tf2_msgs/msg/TFMessage[gz.msgs.Pose_V',
+            '/joint_states@sensor_msgs/msg/JointState[gz.msgs.Model'
+        ],
+        output='screen'
+    )
+
     delayed_spawn = TimerAction(
         period=2.0,
         actions=[spawn_robot]
@@ -86,6 +92,6 @@ def generate_launch_description():
         world_arg,
         gazebo,
         robot_state_publisher_node,
-        joint_state_publisher_node,
-        delayed_spawn
+        delayed_spawn,
+        bridge_node
     ])
