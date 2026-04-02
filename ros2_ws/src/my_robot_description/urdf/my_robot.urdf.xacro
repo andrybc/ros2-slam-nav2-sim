@@ -17,9 +17,9 @@
   <!-- wheel placement -->
   <xacro:property name="front_wheel_x" value="0.09"/>
   <xacro:property name="rear_wheel_x"  value="-0.09"/>
-  <xacro:property name="left_wheel_y"  value="${chassis_width/2.0}"/>
-  <xacro:property name="right_wheel_y" value="-${chassis_width/2.0}"/>
-
+  <xacro:property name="wheel_y_offset" value="${chassis_width/2.0 + wheel_width/2.0 + 0.005}"/>
+  <xacro:property name="left_wheel_y"   value="${wheel_y_offset}"/>
+  <xacro:property name="right_wheel_y"  value="-${wheel_y_offset}"/>
   <!-- simple masses for visualization / basic physics -->
   <xacro:property name="base_mass"  value="3.0"/>
   <xacro:property name="wheel_mass" value="0.2"/>
@@ -234,4 +234,31 @@
       <topic>/joint_states</topic>
     </plugin>
   </gazebo>
+      <!-- =========================
+       Gazebo lidar scan sim
+       ========================= -->
+  <gazebo reference="laser_link">
+  <sensor name="laser_sensor" type="gpu_lidar">
+    <update_rate>10</update_rate>
+    <topic>scan</topic>
+    <gz_frame_id>laser_link</gz_frame_id>
+    <ray>
+      <scan>
+        <horizontal>
+          <samples>720</samples>
+          <resolution>1</resolution>
+          <min_angle>-3.14159</min_angle>
+          <max_angle>3.14159</max_angle>
+        </horizontal>
+      </scan>
+      <range>
+        <min>0.12</min>
+        <max>8.0</max>
+        <resolution>0.01</resolution>
+      </range>
+    </ray>
+    <always_on>true</always_on>
+    <visualize>true</visualize>
+  </sensor>
+</gazebo>
 </robot>

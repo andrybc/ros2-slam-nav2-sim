@@ -1,0 +1,170 @@
+<?xml version="1.0" ?>
+<sdf version="1.9">
+  <world name="maze_world">
+
+    <physics name="1ms" type="ode">
+      <max_step_size>0.001</max_step_size>
+      <real_time_factor>1.0</real_time_factor>
+    </physics>
+
+    <plugin
+      filename="gz-sim-physics-system"
+      name="gz::sim::systems::Physics"/>
+    <plugin
+      filename="gz-sim-user-commands-system"
+      name="gz::sim::systems::UserCommands"/>
+    <plugin
+      filename="gz-sim-scene-broadcaster-system"
+      name="gz::sim::systems::SceneBroadcaster"/>
+    
+    <plugin filename="gz-sim-sensors-system"
+        name="gz::sim::systems::Sensors">
+      <render_engine>ogre2</render_engine>
+    </plugin>
+
+    <light type="directional" name="sun">
+      <cast_shadows>true</cast_shadows>
+      <pose>0 0 10 0 0 0</pose>
+      <diffuse>0.8 0.8 0.8 1</diffuse>
+      <specular>0.2 0.2 0.2 1</specular>
+      <direction>-0.5 0.1 -0.9</direction>
+    </light>
+
+    <model name="ground_plane">
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>20 20</size>
+            </plane>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>20 20</size>
+            </plane>
+          </geometry>
+          <material>
+            <ambient>0.8 0.8 0.8 1</ambient>
+            <diffuse>0.8 0.8 0.8 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- Outer walls -->
+    <model name="outer_walls">
+      <static>true</static>
+
+      <link name="north_wall">
+        <pose>0 4 0.5 0 0 0</pose>
+        <collision name="collision">
+          <geometry><box><size>8.5 0.2 1.0</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>8.5 0.2 1.0</size></box></geometry>
+        </visual>
+      </link>
+
+      <link name="south_wall">
+        <pose>0 -4 0.5 0 0 0</pose>
+        <collision name="collision">
+          <geometry><box><size>8.5 0.2 1.0</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>8.5 0.2 1.0</size></box></geometry>
+        </visual>
+      </link>
+
+      <link name="east_wall">
+        <pose>4 -0.2 0.5 0 0 0</pose>
+        <collision name="collision">
+          <geometry><box><size>0.2 7.6 1.0</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>0.2 7.6 1.0</size></box></geometry>
+        </visual>
+      </link>
+
+      <link name="west_wall">
+        <pose>-4 0.2 0.5 0 0 0</pose>
+        <collision name="collision">
+          <geometry><box><size>0.2 7.6 1.0</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>0.2 7.6 1.0</size></box></geometry>
+        </visual>
+      </link>
+    </model>
+
+    <!-- Internal maze walls -->
+    <model name="maze_walls">
+      <static>true</static>
+
+      <link name="wall_1">
+        <pose>-2.5 1.5 0.5 0 0 0</pose>
+        <collision name="collision">
+          <geometry><box><size>2.5 0.2 1.0</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>2.5 0.2 1.0</size></box></geometry>
+        </visual>
+      </link>
+
+      <link name="wall_2">
+        <pose>-1.5 -1.0 0.5 0 0 1.5708</pose>
+        <collision name="collision">
+          <geometry><box><size>2.8 0.2 1.0</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>2.8 0.2 1.0</size></box></geometry>
+        </visual>
+      </link>
+
+      <link name="wall_3">
+        <pose>0.5 2.5 0.5 0 0 1.5708</pose>
+        <collision name="collision">
+          <geometry><box><size>2.2 0.2 1.0</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>2.2 0.2 1.0</size></box></geometry>
+        </visual>
+      </link>
+
+      <link name="wall_4">
+        <pose>1.5 0.5 0.5 0 0 0</pose>
+        <collision name="collision">
+          <geometry><box><size>2.8 0.2 1.0</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>2.8 0.2 1.0</size></box></geometry>
+        </visual>
+      </link>
+
+      <link name="wall_5">
+        <pose>2.6 -1.8 0.5 0 0 1.5708</pose>
+        <collision name="collision">
+          <geometry><box><size>2.6 0.2 1.0</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>2.6 0.2 1.0</size></box></geometry>
+        </visual>
+      </link>
+
+      <link name="wall_6">
+        <pose>-0.2 -2.7 0.5 0 0 0</pose>
+        <collision name="collision">
+          <geometry><box><size>3.0 0.2 1.0</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>3.0 0.2 1.0</size></box></geometry>
+        </visual>
+      </link>
+    </model>
+
+  </world>
+</sdf>
