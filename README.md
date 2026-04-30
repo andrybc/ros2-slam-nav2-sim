@@ -65,7 +65,7 @@ Tasks:
   - Verify model loads correctly in RViz
   - Confirm static TF relationships are correct
 
-Status: not started
+Status: Completed
 
 ---
 
@@ -81,7 +81,7 @@ Tasks:
     - Broadcasts odom -> base_link
   - Add LiDAR plugin publishing /scan
 
-Status: not started
+Status: Completed
 
 ---
 
@@ -95,7 +95,7 @@ Tasks:
   - Verify map -> odom transform
   - Save generated maps to my_robot_maps
 
-Status: not started
+Status: In Progress
 
 ---
 
