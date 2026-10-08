@@ -33,8 +33,11 @@ sudo apt-get install -y \
 if command -v rosdep >/dev/null 2>&1; then
   sudo rosdep init 2>/dev/null || true
   rosdep update
+  # ROS setup scripts reference unset variables; -u would abort.
+  set +u
   # shellcheck disable=SC1091
   source /opt/ros/jazzy/setup.bash
+  set -u
   rosdep install --from-paths "${REPO_ROOT}/ros2_ws/src" --ignore-src -r -y
 else
   echo "note: rosdep not installed; skipped package.xml dependency resolution." >&2

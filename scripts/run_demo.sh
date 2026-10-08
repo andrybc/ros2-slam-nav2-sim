@@ -18,10 +18,13 @@ if [ ! -f "${WS}/install/setup.bash" ]; then
   exit 1
 fi
 
+# ROS setup scripts reference unset variables; -u would abort on them.
+set +u
 # shellcheck disable=SC1091
 source /opt/ros/jazzy/setup.bash
 # shellcheck disable=SC1091
 source "${WS}/install/setup.bash"
+set -u
 
 case "${1:-}" in
   sim)    exec ros2 launch my_robot_bringup sim.launch.py ;;

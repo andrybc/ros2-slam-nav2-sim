@@ -15,10 +15,13 @@ REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 WS="${REPO_ROOT}/ros2_ws"
 OUT_DIR="${WS}/src/my_robot_maps/maps"
 
+# ROS setup scripts reference unset variables; -u would abort on them.
+set +u
 # shellcheck disable=SC1091
 source /opt/ros/jazzy/setup.bash
 # shellcheck disable=SC1091
 source "${WS}/install/setup.bash"
+set -u
 
 # A 0-byte .pgm almost always means map_saver ran before /map had data, or
 # the node was not in the active lifecycle state. Fail loudly instead.

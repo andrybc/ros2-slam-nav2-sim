@@ -5,8 +5,11 @@ set -euo pipefail
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 WS="${REPO_ROOT}/ros2_ws"
 
+# ROS setup scripts reference unset variables; -u would abort on them.
+set +u
 # shellcheck disable=SC1091
 source /opt/ros/jazzy/setup.bash
+set -u
 
 cd "${WS}"
 colcon build --symlink-install "$@"
