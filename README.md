@@ -15,6 +15,17 @@ The simulation is designed so that **SLAM and Nav2 do not change** when moving t
 
 ---
 
+## Mapping Demo
+
+SLAM Toolbox building an occupancy grid from simulated 360° LiDAR while the
+robot is teleoperated through the maze world.
+
+![SLAM Toolbox mapping in progress](docs/images/mapping.gif)
+
+Stack: ROS 2 Jazzy · Gazebo Harmonic · SLAM Toolbox (sync) · RViz2
+
+---
+
 ## Project Goals
 
 - Build a minimal differential-drive robot from scratch
@@ -37,16 +48,25 @@ The simulation is designed so that **SLAM and Nav2 do not change** when moving t
 ### Frames
 - `map`
 - `odom`
+- `base_footprint`
 - `base_link`
 - `laser_link`
-- (optional) `base_footprint`
 
 ---
-Target TF tree:
+TF tree:
 
-  map -> odom -> base_link -> laser_link
+```text
+map             <- SLAM Toolbox publishes map -> odom
+ └─ odom        <- Gazebo DiffDrive publishes odom -> base_footprint
+     └─ base_footprint
+         └─ base_link        <- robot_state_publisher, fixed
+             └─ laser_link   <- robot_state_publisher, fixed
+```
 
-This TF structure is treated as a strict contract.
+`base_footprint` is the ground-projected frame the diff-drive plugin reports
+its odometry against (`child_frame_id` in the URDF plugin block), and
+`base_link` sits one wheel radius above it. This TF structure is treated as a
+strict contract.
 All simulation and future hardware components are required to conform to it so that
 SLAM Toolbox and Nav2 do not need to be modified when transitioning to real hardware.
 
@@ -78,7 +98,7 @@ Tasks:
   - Spawn robot into Gazebo
   - Add differential drive plugin
     - Publishes /odom
-    - Broadcasts odom -> base_link
+    - Broadcasts odom -> base_footprint
   - Add LiDAR plugin publishing /scan
 
 Status: Completed
@@ -126,23 +146,49 @@ Status: planned
 
 ---
 
-Build Instructions:
+## Build
 
-  cd ros2_ws
-  colcon build --symlink-install
-  source install/setup.bash
+From a fresh clone on Ubuntu 24.04 with ROS 2 Jazzy installed:
 
-Optional helper scripts:
-  ./scripts/install_deps.sh
-  ./scripts/build.sh
+```bash
+./scripts/install_deps.sh     # apt + rosdep
+./scripts/build.sh            # colcon build --symlink-install
+```
+
+Or by hand:
+
+```bash
+cd ros2_ws
+source /opt/ros/jazzy/setup.bash
+colcon build --symlink-install
+source install/setup.bash
+```
 
 ---
 
-Launch Commands (Planned):
+## Run
 
-  ros2 launch my_robot_bringup sim.launch.py
-  ros2 launch my_robot_bringup slam.launch.py
-  ros2 launch my_robot_bringup nav2.launch.py
+Each line needs its own terminal, with the workspace sourced.
+
+```bash
+./scripts/run_demo.sh slam      # Gazebo + robot + bridge + SLAM Toolbox
+./scripts/run_demo.sh rviz      # RViz, Fixed Frame = map
+./scripts/run_demo.sh teleop    # WASD keyboard driving
+```
+
+Simulation only, without SLAM — used for odometry diagnostics:
+
+```bash
+./scripts/run_demo.sh sim
+```
+
+Saving a map, with a non-empty-output check:
+
+```bash
+./scripts/save_map.sh small_room
+```
+
+Nav2 bringup is not implemented yet; see Phase 4.
 
 ---
 
