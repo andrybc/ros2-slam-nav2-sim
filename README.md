@@ -20,7 +20,6 @@ The simulation is designed so that **SLAM and Nav2 do not change** when moving t
 SLAM Toolbox building an occupancy grid from simulated 360° LiDAR while the
 robot is teleoperated through the maze world.
 
-![SLAM Toolbox mapping in progress](docs/images/mapping.gif)
 
 Stack: ROS 2 Jazzy · Gazebo Harmonic · SLAM Toolbox (sync) · RViz2
 
